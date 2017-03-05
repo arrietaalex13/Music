@@ -6,9 +6,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    Scale s;
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
