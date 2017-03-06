@@ -5,11 +5,8 @@
  */
 Scale::Scale()
 {
-    // All scales have 8 notes
-    scale.resize(8);
-
     CreateAllNotes();
-    CreateMajorScale(Note('C'));
+    CreateScale(Note('C'), MAJOR);
 }
 
 /*!
@@ -20,6 +17,7 @@ Scale::Scale()
 Scale::Scale(Note root, Key newKey)
 {
     CreateAllNotes();
+    CreateScale(root, newKey);
 }
 
 /*!
@@ -46,13 +44,12 @@ void Scale::ChangeKey(Key newKey)
 }
 
 /*!
- * \brief Scale::GetNote Gets the note from the desired interval
- * \param i The note in the scale you would like to get
- * \return The ith note in the scale
+ * \brief Scale::GetScale Gets the scale.
+ * \return QVector containing scale.
  */
-Note Scale::GetNote(int i) const
+QVector<Note> Scale::GetScale() const
 {
-    return scale.at(i-1);
+    return scale;
 }
 
 /*!
@@ -106,25 +103,56 @@ int Scale::FindInAllNotes(Note toFind)
 }
 
 /*!
- * \brief Scale::CreateMajorScale Creates major scale
+ * \brief Scale::CreateScale Creates scale based on key
  * \param root Note used for root of scale
+ * \param newKey The key for the scale
  */
-void Scale::CreateMajorScale(Note root)
+void Scale::CreateScale(Note root, Key newKey)
 {
-    key = MAJOR;
+    // All scales have 8 notes
+    scale.resize(8);
+    int index;
 
-    int index = FindInAllNotes(root);
-    scale[0] = allNotes[index];
-
-    // Jumps tone or semi-tone based on where you are in array of notes
-    for(int i = 1; i < 8; i++)
+    switch(newKey)
     {
-        if(i == 3 || i == 7)
-            scale[i] = allNotes[(index += SEMI_TONE) % NUMBER_OF_NOTES];
-        else
-            scale[i] = allNotes[(index += TONE) % NUMBER_OF_NOTES];
+        case MAJOR :
+                key = MAJOR;
+
+                index = FindInAllNotes(root);
+                scale[0] = allNotes[index];
+
+                // Jumps tone or semi-tone based on where you are in array of notes
+                for(int i = 1; i < 8; i++)
+                {
+                    if(i == 3 || i == 7)
+                        scale[i] = allNotes[(index += SEMI_TONE) % NUMBER_OF_NOTES];
+                    else
+                        scale[i] = allNotes[(index += TONE) % NUMBER_OF_NOTES];
+                }
+
+//                for(int i = 0; i < 8; i++)
+//                   qDebug() << scale.at(i).Name();
+            break;
+
+        case MINOR :
+                key = MINOR;
+
+                index = FindInAllNotes(root);
+                scale[0] = allNotes[index];
+
+                // Jumps tone or semi-tone based on where you are in array of notes
+                for(int i = 1; i < 8; i++)
+                {
+                    if(i == 2 || i == 5)
+                        scale[i] = allNotes[(index += SEMI_TONE) % NUMBER_OF_NOTES];
+                    else
+                        scale[i] = allNotes[(index += TONE) % NUMBER_OF_NOTES];
+                }
+
+                for(int i = 0; i < 8; i++)
+                   qDebug() << scale.at(i).Name();
+            break;
     }
 
-    for(int i = 0; i < 8; i++)
-       qDebug() << scale.at(i).Name();
+
 }

@@ -4,14 +4,9 @@
 #include <qDebug>
 #include <qString>
 #include "note.h"
+#include "scale.h"
 
-enum Key
-{
-    MAJOR,
-    MINOR
-};
-
-class Chord
+class Chord : public Scale
 {
 public:
     Chord();
@@ -26,6 +21,8 @@ public:
 private:
     Note notes[3]; // 3 Notes used in chord
     Key key;       // Key of chord
+
+    void CreateChord(Note root, Key newKey);
 };
 
 #endif // CHORD_H

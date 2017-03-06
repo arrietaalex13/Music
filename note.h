@@ -21,7 +21,8 @@ public:
     void ChangeNote(char name, NoteType type = NORMAL);
 
     QString Name() const;
-    char Base() const;
+    char    Base() const;
+
 private:
     char noteName; // Name of note
     char noteType; // Type of note

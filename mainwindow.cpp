@@ -6,8 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    Scale s;
+    //Chord c;
+    //Chord Cm(Note('C'), MINOR);
+    //Chord a(Note('A'), MAJOR);
+    Scale min(Note('C'), MINOR);
 }
 
 MainWindow::~MainWindow()

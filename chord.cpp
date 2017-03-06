@@ -1,11 +1,11 @@
 #include "chord.h"
 /*!
- * \brief Chord::Chord Constructor - Defaults to A major chord
+ * \brief Chord::Chord Constructor - Defaults to C major chord
  */
 Chord::Chord()
+     : Scale()
 {
-    notes[0] = Note('A');
-    key = MAJOR;
+    CreateChord(Note('C'), MAJOR);
 }
 
 /*!
@@ -14,9 +14,9 @@ Chord::Chord()
  * \param key Key of chord
  */
 Chord::Chord(Note root, Key newKey)
+     : Scale(root, newKey)
 {
-    notes[0] = root;
-    key = newKey;
+    CreateChord(root, newKey);
 }
 
 /*!
@@ -30,7 +30,7 @@ Chord::~Chord(){}
  */
 void Chord::ChangeRoot(Note root)
 {
-
+    CreateChord(root, key);
 }
 
 /*!
@@ -39,5 +39,31 @@ void Chord::ChangeRoot(Note root)
  */
 void Chord::ChangeKey(Key newKey)
 {
+    CreateChord(notes[0], newKey);
+}
+
+/*!
+ * \brief Chord::CreateChord Creates the cord
+ */
+void Chord::CreateChord(Note root, Key newKey)
+{
+    // Assigns root note into first position
+    notes[0] = root;
+    key = newKey;
+
+    switch(key)
+    {
+    case MAJOR : notes[1] = scale.at(2);
+                 notes[2] = scale.at(4);
+        break;
+    case MINOR :
+                notes[1] = scale.at(2);
+                notes[1] = scale.at(4);
+        break;
+    }
+
+    qDebug() << "chord[0]" << notes[0].Name();
+    qDebug() << "chord[1]" << notes[1].Name();
+    qDebug() << "chord[2]" << notes[2].Name();
 
 }

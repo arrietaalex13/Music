@@ -4,12 +4,17 @@
 #include <QDebug>
 #include <QVector>
 #include "note.h"
-#include "chord.h"
 
 enum NoteValue
 {
     SEMI_TONE = 1,
     TONE      = 2
+};
+
+enum Key
+{
+    MAJOR,
+    MINOR
 };
 
 class Scale
@@ -22,15 +27,16 @@ public:
     void ChangeRoot(Note root);
     void ChangeKey(Key newKey);
 
-    Note GetNote(int interval) const;
+    QVector<Note> GetScale() const;
 
-private:
+protected:
     QVector<Note> scale;
     Key  key;
 
+private:
     void CreateAllNotes();
     int  FindInAllNotes(Note toFind);
-    void CreateMajorScale(Note root);
+    void CreateScale(Note root, Key newKey);
 
     const int NUMBER_OF_NOTES = 12; // Number of notes total
     Note allNotes[12];
