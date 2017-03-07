@@ -21,7 +21,7 @@ class Scale
 {
 public:
     Scale();
-    Scale(Note root, Key newKey);
+    Scale(Note root, Key newKey = MAJOR);
     ~Scale();
 
     void ChangeRoot(Note root);
@@ -31,16 +31,24 @@ public:
     int  Sharps() const;
     int  Flats() const;
 
+    Note Second()  const;
+    Note Third()   const;
+    Note Fourth()  const;
+    Note Fifth()   const;
+    Note Sixth()   const;
+    Note Seventh() const;
+
     QVector<Note> GetScale() const;
 
 protected:
     QVector<Note> scale;
     Key  key;
 
+    void CreateScale(Note root, Key newKey);
+
 private:
     void CreateAllNotes();
     int  FindInAllNotes(Note toFind);
-    void CreateScale(Note root, Key newKey);
     void ToggleAccidentals();
 
     const int NUMBER_OF_NOTES = 12; // Number of notes total

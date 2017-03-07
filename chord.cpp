@@ -30,6 +30,7 @@ Chord::~Chord(){}
  */
 void Chord::ChangeRoot(Note root)
 {
+    CreateScale(root, key);
     CreateChord(root, key);
 }
 
@@ -39,6 +40,7 @@ void Chord::ChangeRoot(Note root)
  */
 void Chord::ChangeKey(Key newKey)
 {
+    CreateScale(notes[0], newKey);
     CreateChord(notes[0], newKey);
 }
 
@@ -53,12 +55,12 @@ void Chord::CreateChord(Note root, Key newKey)
 
     switch(key)
     {
-    case MAJOR : notes[1] = scale.at(2);
-                 notes[2] = scale.at(4);
+    case MAJOR : notes[1] = Third();
+                 notes[2] = Fifth();
         break;
     case MINOR :
-                notes[1] = scale.at(2);
-                notes[2] = scale.at(4);
+                notes[1] = Third();
+                notes[2] = Fifth();
         break;
     }
 

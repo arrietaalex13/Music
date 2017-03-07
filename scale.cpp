@@ -73,6 +73,61 @@ int Scale::Flats() const
 {
     return numFlats;
 }
+
+/*!
+ * \brief Scale::Second
+ * \return Second interval of scale
+ */
+Note Scale::Second() const
+{
+    return scale.at(1);
+}
+
+/*!
+ * \brief Scale::Third
+ * \return Third interval of scale
+ */
+Note Scale::Third() const
+{
+    return scale.at(2);
+}
+
+/*!
+ * \brief Scale::Fourth
+ * \return Fourth interval of scale
+ */
+Note Scale::Fourth() const
+{
+    return scale.at(3);
+}
+
+/*!
+ * \brief Scale::Fifth
+ * \return Fifth interval of scale
+ */
+Note Scale::Fifth() const
+{
+    return scale.at(4);
+}
+
+/*!
+ * \brief Scale::Sixth
+ * \return Sixth interval of scale
+ */
+Note Scale::Sixth() const
+{
+    return scale.at(5);
+}
+
+/*!
+ * \brief Scale::Seventh
+ * \return Seventh interval of scale
+ */
+Note Scale::Seventh() const
+{
+    return scale.at(6);
+}
+
 /*!
  * \brief Scale::GetScale Gets the scale.
  * \return QVector containing scale.
@@ -152,13 +207,9 @@ void Scale::CreateScale(Note root, Key newKey)
      * Sets up first note of scale and converts accidental to appropriate title
      ***************************************************************************/
     index = FindInAllNotes(root);
-    // Assigns note into first note of scale as a sharp if it's a flat
+
+    // Assigns note into first note of scale as a sharp even if it's a flat
     scale[0] = allNotes[index];
-
-    // If original note was a flat, changes scale to reflect flats
-    if(root.GetAccidental() == FLAT)
-        scale[0].ConvertAccidental();
-
 
     // Adds up sharps, flats, and naturals
     switch(scale.at(0).GetAccidental())
@@ -169,7 +220,6 @@ void Scale::CreateScale(Note root, Key newKey)
         break;
     case FLAT    : numFlats++;
     }
-
 
     switch(newKey)
     {
@@ -199,8 +249,6 @@ void Scale::CreateScale(Note root, Key newKey)
                 if(scale.at(0).GetAccidental() == FLAT)
                     ToggleAccidentals();
 
-                for(int i = 0; i < 8; i++)
-                   qDebug() << scale.at(i).Name();
             break;
 
         case MINOR :
@@ -224,16 +272,16 @@ void Scale::CreateScale(Note root, Key newKey)
                     case FLAT    : numFlats++;
                     }
                 }
-
-                // If scale is of a sharp note then converts other accidentals to sharps
-                if(scale.at(0).GetAccidental() == FLAT)
+                // Converts all accidentals to match accidental of root (if it exists)
+                //      If note is natural, all accidentals converted to flats by default
+                if(root.GetAccidental() == FLAT || root.GetAccidental() == NATURAL)
                     ToggleAccidentals();
 
-                for(int i = 0; i < 8; i++)
-                   qDebug() << scale.at(i).Name();
             break;
     }
 
+//    for(int i = 0; i < 8; i++)
+//       qDebug() << scale.at(i).Name();
 
 }
 
@@ -242,7 +290,7 @@ void Scale::CreateScale(Note root, Key newKey)
  */
 void Scale::ToggleAccidentals()
 {
-    for(int i = 1; i < 8; i++)
+    for(int i = 0; i < 8; i++)
     {
         if(scale.at(i).GetAccidental() != NATURAL)
             scale[i].ConvertAccidental();
