@@ -13,9 +13,9 @@ Note::Note()
  * \param name Name of note
  * \param type Type of note (sharp or flat)
  */
-Note::Note(char name, NoteType type)
+Note::Note(char name, Accidental newAccidental)
 {
-    ChangeNote(name, type);
+    ChangeNote(name, newAccidental);
 }
 
 /*!
@@ -28,34 +28,67 @@ Note::~Note(){}
  * \param name New name of note
  * \param type New type of note (sharp or flat)
  */
-void Note::ChangeNote(char name, NoteType type)
+void Note::ChangeNote(char name, Accidental newAccidental)
 {
     noteName = name;
 
     // Checks if the sharp exists
-    if((noteName == 'B' || noteName == 'E') && type == SHARP)
+    if((noteName == 'B' || noteName == 'E') && newAccidental == SHARP)
     {
         noteName++;
-        noteType = ' ';
+        accidental = ' ';
     }
     // Checks if the flat exists
-    else if((noteName == 'C' || noteName == 'F') && type == FLAT)
+    else if((noteName == 'C' || noteName == 'F') && newAccidental == FLAT)
     {
         noteName--;
-        noteType = ' ';
+        accidental = ' ';
     }
     // Assigns sharp or flat normally
     else
     {
-        switch(type)
+        switch(newAccidental)
         {
-        case NORMAL : noteType = ' ';
+        case NATURAL : accidental = ' ';
             break;
-        case SHARP  : noteType = '#';
+        case SHARP  : accidental = '#';
             break;
-        case FLAT   : noteType = 'b';
+        case FLAT   : accidental = 'b';
         }
     }
+}
+
+/*!
+ * \brief Note::ConvertAccidental Converts accidental of a note
+ */
+void Note::ConvertAccidental()
+{
+    switch(accidental)
+    {
+    case '#' :
+               if(noteName == 'G')
+               {
+                    noteName = 'A';
+                    accidental = 'b';
+               }
+               else
+               {
+                   noteName++;
+                   accidental = 'b';
+               }
+        break;
+    case 'b' :
+                if(noteName == 'A')
+                {
+                     noteName = 'G';
+                     accidental = '#';
+                }
+                else
+                {
+                    noteName++;
+                    accidental = '#';
+                }
+    } // end switch(accidental)
 }
 
 /*!
@@ -65,8 +98,8 @@ void Note::ChangeNote(char name, NoteType type)
 QString Note::Name() const
 {
     QString fullName(noteName);
-    if(noteType != ' ')
-        fullName.append(noteType);
+    if(accidental != ' ')
+        fullName.append(accidental);
     return fullName;
 }
 
@@ -77,4 +110,20 @@ QString Note::Name() const
 char Note::Base() const
 {
     return noteName;
+}
+
+/*!
+ * \brief Note::GetAccidental Gets the accidental of the note
+ * \return Enum form of accidental of note
+ */
+Accidental Note::GetAccidental() const
+{
+    switch(accidental)
+    {
+    case ' ' : return NATURAL;
+        break;
+    case '#' : return SHARP;
+        break;
+    case 'b' : return FLAT;
+    }
 }

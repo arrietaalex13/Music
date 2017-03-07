@@ -5,6 +5,7 @@
  */
 Scale::Scale()
 {
+    numNaturals = numSharps = numFlats = 0;
     CreateAllNotes();
     CreateScale(Note('C'), MAJOR);
 }
@@ -16,6 +17,7 @@ Scale::Scale()
  */
 Scale::Scale(Note root, Key newKey)
 {
+    numNaturals = numSharps = numFlats = 0;
     CreateAllNotes();
     CreateScale(root, newKey);
 }
@@ -31,7 +33,8 @@ Scale::~Scale(){}
  */
 void Scale::ChangeRoot(Note root)
 {
-
+    numNaturals = numSharps = numFlats = 0;
+    CreateScale(root, key);
 }
 
 /*!
@@ -40,9 +43,36 @@ void Scale::ChangeRoot(Note root)
  */
 void Scale::ChangeKey(Key newKey)
 {
-
+    numNaturals = numSharps = numFlats = 0;
+    CreateScale(Note(scale[0].Base(), scale[0].GetAccidental()), newKey);
 }
 
+/*!
+ * \brief Scale::Naturals Returns the number of natural notes in the scale
+ * \return Number of natural notes in scale
+ */
+int Scale::Naturals() const
+{
+    return numNaturals;
+}
+
+/*!
+ * \brief Scale::Sharps Returns the number of sharp notes in the scale
+ * \return Number of sharp notes in scale
+ */
+int Scale::Sharps() const
+{
+    return numSharps;
+}
+
+/*!
+ * \brief Scale::Flats Returns the number of flat notes in the scale
+ * \return Number of flat notes in scale
+ */
+int Scale::Flats() const
+{
+    return numFlats;
+}
 /*!
  * \brief Scale::GetScale Gets the scale.
  * \return QVector containing scale.
@@ -90,7 +120,10 @@ int Scale::FindInAllNotes(Note toFind)
 
     while(i < NUMBER_OF_NOTES && !found)
     {
-        if(allNotes[i].Name() == toFind.Name())
+        // Accounts for searching for flats in terms of sharps (i.e. Eb = D#)
+        if(allNotes[i].Name() == toFind.Name() ||
+          (toFind.Base() - allNotes[i].Base() == 1 &&
+                               (toFind.GetAccidental() == FLAT && allNotes[i].GetAccidental() == SHARP)))
             found = true;
         else
             i++;
@@ -109,17 +142,39 @@ int Scale::FindInAllNotes(Note toFind)
  */
 void Scale::CreateScale(Note root, Key newKey)
 {
+    scale.clear();
+
     // All scales have 8 notes
     scale.resize(8);
     int index;
+
+    /***************************************************************************
+     * Sets up first note of scale and converts accidental to appropriate title
+     ***************************************************************************/
+    index = FindInAllNotes(root);
+    // Assigns note into first note of scale as a sharp if it's a flat
+    scale[0] = allNotes[index];
+
+    // If original note was a flat, changes scale to reflect flats
+    if(root.GetAccidental() == FLAT)
+        scale[0].ConvertAccidental();
+
+
+    // Adds up sharps, flats, and naturals
+    switch(scale.at(0).GetAccidental())
+    {
+    case NATURAL : numNaturals++;
+        break;
+    case SHARP   : numSharps++;
+        break;
+    case FLAT    : numFlats++;
+    }
+
 
     switch(newKey)
     {
         case MAJOR :
                 key = MAJOR;
-
-                index = FindInAllNotes(root);
-                scale[0] = allNotes[index];
 
                 // Jumps tone or semi-tone based on where you are in array of notes
                 for(int i = 1; i < 8; i++)
@@ -128,17 +183,28 @@ void Scale::CreateScale(Note root, Key newKey)
                         scale[i] = allNotes[(index += SEMI_TONE) % NUMBER_OF_NOTES];
                     else
                         scale[i] = allNotes[(index += TONE) % NUMBER_OF_NOTES];
+
+                    // Adds up sharps, flats, and naturals
+                    switch(scale.at(i).GetAccidental())
+                    {
+                    case NATURAL : numNaturals++;
+                        break;
+                    case SHARP   : numSharps++;
+                        break;
+                    case FLAT    : numFlats++;
+                    }
                 }
 
-//                for(int i = 0; i < 8; i++)
-//                   qDebug() << scale.at(i).Name();
+                // If scale is of a flat note then converts other accidentals to flat
+                if(scale.at(0).GetAccidental() == FLAT)
+                    ToggleAccidentals();
+
+                for(int i = 0; i < 8; i++)
+                   qDebug() << scale.at(i).Name();
             break;
 
         case MINOR :
                 key = MINOR;
-
-                index = FindInAllNotes(root);
-                scale[0] = allNotes[index];
 
                 // Jumps tone or semi-tone based on where you are in array of notes
                 for(int i = 1; i < 8; i++)
@@ -147,7 +213,21 @@ void Scale::CreateScale(Note root, Key newKey)
                         scale[i] = allNotes[(index += SEMI_TONE) % NUMBER_OF_NOTES];
                     else
                         scale[i] = allNotes[(index += TONE) % NUMBER_OF_NOTES];
+
+                    // Adds up sharps, flats, and naturals
+                    switch(scale.at(i).GetAccidental())
+                    {
+                    case NATURAL : numNaturals++;
+                        break;
+                    case SHARP   : numSharps++;
+                        break;
+                    case FLAT    : numFlats++;
+                    }
                 }
+
+                // If scale is of a sharp note then converts other accidentals to sharps
+                if(scale.at(0).GetAccidental() == FLAT)
+                    ToggleAccidentals();
 
                 for(int i = 0; i < 8; i++)
                    qDebug() << scale.at(i).Name();
@@ -155,4 +235,16 @@ void Scale::CreateScale(Note root, Key newKey)
     }
 
 
+}
+
+/*!
+ * \brief Scale::ToggleAccidentals Only converts each note besides the note that the scale is based on
+ */
+void Scale::ToggleAccidentals()
+{
+    for(int i = 1; i < 8; i++)
+    {
+        if(scale.at(i).GetAccidental() != NATURAL)
+            scale[i].ConvertAccidental();
+    }
 }

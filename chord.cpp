@@ -58,7 +58,7 @@ void Chord::CreateChord(Note root, Key newKey)
         break;
     case MINOR :
                 notes[1] = scale.at(2);
-                notes[1] = scale.at(4);
+                notes[2] = scale.at(4);
         break;
     }
 

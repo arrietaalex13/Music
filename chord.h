@@ -6,7 +6,7 @@
 #include "note.h"
 #include "scale.h"
 
-class Chord : public Scale
+class Chord : private Scale
 {
 public:
     Chord();
